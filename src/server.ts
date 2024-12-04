@@ -1,6 +1,28 @@
 import mongoose from 'mongoose';
 import app from './app';
 import envConfig from './config/env.config';
+import { Server } from 'http';
+
+let server: Server;
+
+process.on('uncaughtException', (error) => {
+  console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.error('Uncaught Exception Error:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (error) => {
+  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.error('Unhandled Rejection Error:', error);
+  if (server) {
+    server.close(() => {
+      console.error('Server closed due to unhandled rejection');
+      process.exit(1);
+    });
+  } else {
+    process.exit(1);
+  }
+});
 
 async function main() {
   try {

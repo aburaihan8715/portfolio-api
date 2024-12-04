@@ -20,7 +20,7 @@ export default [
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
-          varsIgnorePattern: 'err|error', // Only warn for unused err/error variables
+          varsIgnorePattern: 'err|error|password|__v', // Only warn for unused err/error variables
           argsIgnorePattern: '^_', // (Optional) ignore args starting with _
         },
       ],
