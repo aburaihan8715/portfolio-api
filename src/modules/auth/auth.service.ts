@@ -1,10 +1,13 @@
 import httpStatus from 'http-status';
+import { JwtPayload } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 import AppError from '../../errors/AppError';
 import { User } from '../user/user.model';
 import { ILogin } from './auth.interface';
-import createToken from './auth.utils';
+
 import envConfig from '../../config/env.config';
+import { AuthUtils } from './auth.utils';
 
 // LOGIN
 const loginIntoDB = async (payload: ILogin) => {
@@ -24,18 +27,18 @@ const loginIntoDB = async (payload: ILogin) => {
 
   // 03. create accessToken and refreshToken
   const jwtPayload = {
-    id: user._id,
+    _id: user._id,
     email: user.email,
     role: user.role as string,
   };
 
-  const accessToken = createToken(
+  const accessToken = AuthUtils.createToken(
     jwtPayload,
     envConfig.JWT.jwt_access_secret as string,
     envConfig.JWT.jwt_access_expires_in as string,
   );
 
-  const refreshToken = createToken(
+  const refreshToken = AuthUtils.createToken(
     jwtPayload,
     envConfig.JWT.jwt_refresh_secret as string,
     envConfig.JWT.jwt_refresh_expires_in as string,
@@ -53,4 +56,51 @@ const loginIntoDB = async (payload: ILogin) => {
   };
 };
 
-export const AuthService = { loginIntoDB };
+// CHANGE PASSWORD
+const changePasswordIntoDB = async (
+  userData: JwtPayload,
+  payload: { oldPassword: string; newPassword: string },
+) => {
+  // checking if the user is exist
+  const user = await User.getUserById(userData._id);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+  }
+
+  // checking if the user is already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
+  }
+
+  // checking if the password is correct
+  if (
+    !(await User.isPasswordCorrect(payload.oldPassword, user?.password))
+  ) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+  }
+
+  // hash new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(envConfig.BCRYPT_SALT_ROUNDS),
+  );
+
+  await User.findOneAndUpdate(
+    {
+      _id: userData._id,
+      role: userData.role,
+    },
+    {
+      password: newHashedPassword,
+      passwordChangedAt: new Date(),
+    },
+    { runValidators: true },
+  );
+
+  return null;
+};
+
+export const AuthService = { loginIntoDB, changePasswordIntoDB };
