@@ -103,4 +103,67 @@ const changePasswordIntoDB = async (
   return null;
 };
 
-export const AuthService = { loginIntoDB, changePasswordIntoDB };
+// Get refresh token
+const getRefreshToken = async (token: string) => {
+  // checking if the given token is valid
+  const decoded = await AuthUtils.verifyToken(
+    token,
+    envConfig.JWT.jwt_refresh_secret as string,
+  );
+
+  const { _id, iat } = decoded;
+
+  // checking if the user is exist
+  const user = await User.getUserById(_id);
+
+  if (!user) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'This user is not found with the token id !',
+    );
+  }
+  // checking if the user is already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'This user already is deleted !',
+    );
+  }
+
+  if (
+    user.passwordChangedAt &&
+    User.isPasswordChangedAfterJwtIssued(
+      user.passwordChangedAt,
+      iat as number,
+    )
+  ) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      'User recently changed password! Please login again!',
+    );
+  }
+
+  const jwtPayload = {
+    _id: user._id,
+    role: user.role,
+    email: user.email,
+  };
+
+  const accessToken = AuthUtils.createToken(
+    jwtPayload,
+    envConfig.JWT.jwt_access_secret as string,
+    envConfig.JWT.jwt_access_expires_in as string,
+  );
+
+  return {
+    accessToken,
+  };
+};
+
+export const AuthService = {
+  loginIntoDB,
+  changePasswordIntoDB,
+  getRefreshToken,
+};

@@ -1,6 +1,7 @@
 import express from 'express';
 import httpStatus from 'http-status';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 
 import { AuthRouter } from './modules/auth/auth.route';
 import envConfig from './config/env.config';
@@ -12,6 +13,7 @@ const app = express();
 
 // GLOBAL MIDDLEWARES
 app.use(express.json());
+app.use(cookieParser());
 if (envConfig.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }

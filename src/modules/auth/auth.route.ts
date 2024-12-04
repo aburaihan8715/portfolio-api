@@ -25,4 +25,10 @@ router.patch(
   AuthController.changePassword,
 );
 
+router.get(
+  '/refresh-token',
+  validateRequest(AuthValidation.refreshTokenValidationSchema),
+  AuthController.refreshToken,
+);
+
 export const AuthRouter = router;
