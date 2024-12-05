@@ -16,8 +16,13 @@ const registerIntoDB = async (file: IFile, payload: IUser) => {
 
 const updateProfileIntoDB = async (
   id: string,
-  payload: Partial<IUser>,
+  file: IFile,
+  payload: Pick<IUser, 'name' | 'profilePhoto' | 'address' | 'phone'>,
 ) => {
+  // check if file
+  if (file && file.path) {
+    payload.profilePhoto = file.path;
+  }
   // check user exists
   let user = await User.getUserById(id);
 
@@ -37,4 +42,25 @@ const updateProfileIntoDB = async (
   return userWithoutPassword;
 };
 
-export const UserService = { registerIntoDB, updateProfileIntoDB };
+const makeRoleIntoDB = async (
+  id: string,
+  payload: Pick<IUser, 'role'>,
+) => {
+  const userWithUpdatedRole = (await User.findByIdAndUpdate(
+    id,
+    { role: payload.role },
+    { new: true },
+  )) as IUser;
+
+  // delete password form the user
+  const { password, __v, ...userWithoutPassword } =
+    userWithUpdatedRole.toObject();
+
+  return userWithoutPassword;
+};
+
+export const UserService = {
+  registerIntoDB,
+  updateProfileIntoDB,
+  makeRoleIntoDB,
+};

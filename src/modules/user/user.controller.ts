@@ -21,11 +21,9 @@ const register = catchAsync(async (req, res) => {
 
 // UPDATE PROFILE
 const updateProfile = catchAsync(async (req, res) => {
-  // console.log(JSON.parse(req.body.data));
-  // console.log(req.file);
-  const id = req.user._id;
   const updatedProfile = await UserService.updateProfileIntoDB(
-    id,
+    req.user._id,
+    req.file as IFile,
     req.body,
   );
 
@@ -37,4 +35,18 @@ const updateProfile = catchAsync(async (req, res) => {
   });
 });
 
-export const UserController = { register, updateProfile };
+// MAKE ROLE
+const makeRole = catchAsync(async (req, res) => {
+  const userWithUpdatedRole = await UserService.makeRoleIntoDB(
+    req.params.id,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Role updated successfully',
+    data: userWithUpdatedRole,
+  });
+});
+export const UserController = { register, updateProfile, makeRole };
