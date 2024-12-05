@@ -18,6 +18,12 @@ if (envConfig.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// TEST MIDDLEWARE
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
 // TEST ROUTE
 app.get('/', (req, res) => {
   res.status(httpStatus.OK).json({

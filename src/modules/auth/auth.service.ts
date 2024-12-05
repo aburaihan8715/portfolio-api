@@ -2,12 +2,18 @@ import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
+import fs from 'fs';
+import path from 'path';
+import handlebars from 'handlebars';
+import { convert } from 'html-to-text';
+
 import AppError from '../../errors/AppError';
 import { User } from '../user/user.model';
 import { ILogin } from './auth.interface';
 
 import envConfig from '../../config/env.config';
 import { AuthUtils } from './auth.utils';
+import { sendEmailV2 } from '../../utils/sendEmailV2';
 
 // LOGIN
 const loginIntoDB = async (payload: ILogin) => {
@@ -103,7 +109,7 @@ const changePasswordIntoDB = async (
   return null;
 };
 
-// Get refresh token
+// GET REFRESH TOKEN
 const getRefreshToken = async (token: string) => {
   // checking if the given token is valid
   const decoded = await AuthUtils.verifyToken(
@@ -162,8 +168,108 @@ const getRefreshToken = async (token: string) => {
   };
 };
 
+// FORGET PASSWORD
+const forgetPassword = async (email: string) => {
+  // checking if the user is exist
+  const user = await User.getUserByEmail(email);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+  }
+  // checking if the user is already deleted
+  const isDeleted = user?.isDeleted;
+  if (isDeleted) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'This user already is deleted !',
+    );
+  }
+
+  const jwtPayload = {
+    _id: user._id,
+    email: user.email,
+    role: user.role,
+  };
+
+  const resetToken = AuthUtils.createToken(
+    jwtPayload,
+    envConfig.JWT.jwt_password_reset_secret as string,
+    envConfig.JWT.jwt_password_reset_expires_in as string,
+  );
+
+  const passwordResetUiLink = `${envConfig.PASSWORD_RESET_UI_LINK}?email=${user.email}&token=${resetToken} `;
+
+  // Load the email template
+  const templatePath = path.join(
+    process.cwd(),
+    'public',
+    'emailTemplate.html',
+  );
+  const templateSource = fs.readFileSync(templatePath, 'utf-8');
+  const template = handlebars.compile(templateSource);
+
+  // Replace placeholders in the template
+  const html = template({
+    NAME: user.name, // Pass the user's name (or fallback)
+    RESET_LINK: passwordResetUiLink,
+  });
+
+  // Convert HTML to plain text
+  const text = convert(html);
+
+  // Send the email
+  await sendEmailV2(user.email, html, text);
+};
+
+// RESET PASSWORD
+const resetPassword = async (
+  payload: { email: string; newPassword: string },
+  token: string,
+) => {
+  // checking if the user is exist
+  const user = await User.getUserByEmail(payload?.email);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+  }
+  // checking if the user is already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
+  }
+
+  const decoded = await AuthUtils.verifyToken(
+    token,
+    envConfig.JWT.jwt_password_reset_secret as string,
+  );
+
+  if (payload.email !== decoded.email) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
+  }
+
+  //hash new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(envConfig.BCRYPT_SALT_ROUNDS),
+  );
+
+  await User.findOneAndUpdate(
+    {
+      email: decoded.email,
+      role: decoded.role,
+    },
+    {
+      password: newHashedPassword,
+      passwordChangedAt: new Date(),
+    },
+  );
+};
+
 export const AuthService = {
   loginIntoDB,
   changePasswordIntoDB,
   getRefreshToken,
+  forgetPassword,
+  resetPassword,
 };
