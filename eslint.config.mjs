@@ -17,6 +17,7 @@ export default [
       'prefer-const': 'error',
       'no-console': 'warn',
       'no-undef': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
