@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Query, Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IUser, IUserModel } from './user.interface';
 import envConfig from '../../config/env.config';
@@ -70,7 +71,7 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-// DOCUMENT MIDDLEWARE PRE (save and find)
+//======== DOCUMENT MIDDLEWARE PRE (save and find)=========
 userSchema.pre('save', async function (next) {
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
@@ -87,7 +88,12 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// DOCUMENT MIDDLEWARE POST (save and find)
+userSchema.pre(/^find/, function (this: Query<any, IUser>, next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+//========= DOCUMENT MIDDLEWARE POST (save and find)========
 // remove password from send data
 userSchema.post('save', function (doc, next) {
   // doc.password = '';
@@ -97,7 +103,7 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 
-// STATIC METHODS
+//============ STATIC METHODS ==============
 userSchema.statics.getUserById = async function (id: string) {
   return await User.findOne({ _id: id }).select('+password');
 };

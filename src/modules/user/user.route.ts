@@ -33,10 +33,38 @@ router.patch(
 );
 
 router.patch(
-  '/make-role/:id',
+  '/make-admin/:id',
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  validateRequest(UserValidation.makeRoleValidationSchema),
-  UserController.makeRole,
+  UserController.makeAdmin,
+);
+
+router.get(
+  '/',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  UserController.getAllUsers,
+);
+
+router.delete(
+  '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  UserController.deleteUser,
+);
+
+router.get(
+  '/me',
+  auth(
+    USER_ROLE.superAdmin,
+    USER_ROLE.admin,
+    USER_ROLE.customer,
+    USER_ROLE.vendor,
+  ),
+  UserController.getMe,
+);
+
+router.get(
+  '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  UserController.getSingleUser,
 );
 
 export const UserRouter = router;

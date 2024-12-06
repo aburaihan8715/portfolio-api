@@ -8,6 +8,7 @@ import envConfig from './config/env.config';
 import notFound from './middlewares/notFound';
 import globalError from './middlewares/globalError';
 import { UserRouter } from './modules/user/user.route';
+import { CategoryRouter } from './modules/category/category.route';
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.get('/', (req, res) => {
 // ROUTES
 app.use('/api/v1/auth', AuthRouter);
 app.use('/api/v1/users', UserRouter);
+app.use('/api/v1/categories', CategoryRouter);
 
 // NOT FOUND ROUTE
 app.use(notFound);

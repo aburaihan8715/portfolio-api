@@ -42,13 +42,7 @@ const updateProfileValidationSchema = z.object({
   }),
 });
 
-const makeRoleValidationSchema = z.object({
-  body: z.object({
-    role: z.string({ required_error: 'Role is required' }),
-  }),
-});
 export const UserValidation = {
   createValidationSchema,
   updateProfileValidationSchema,
-  makeRoleValidationSchema,
 };

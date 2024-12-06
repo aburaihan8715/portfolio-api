@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { IFile } from '../../interface/file.interface';
 import { IUser } from '../user/user.interface';
@@ -42,25 +43,72 @@ const updateProfileIntoDB = async (
   return userWithoutPassword;
 };
 
-const makeRoleIntoDB = async (
-  id: string,
-  payload: Pick<IUser, 'role'>,
-) => {
-  const userWithUpdatedRole = (await User.findByIdAndUpdate(
+const makeAdminIntoDB = async (id: string) => {
+  const user = (await User.findByIdAndUpdate(
     id,
-    { role: payload.role },
+    { role: 'admin' },
     { new: true },
   )) as IUser;
 
   // delete password form the user
-  const { password, __v, ...userWithoutPassword } =
-    userWithUpdatedRole.toObject();
+  const { password, __v, ...userWithoutPassword } = user.toObject();
 
   return userWithoutPassword;
+};
+
+const getAllUsersFromDB = async (query: Record<string, unknown>) => {
+  const userQuery = new QueryBuilder(User.find(), query)
+    .search(['name', 'email', 'role', 'phone', 'address'])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await userQuery.modelQuery;
+  const meta = await userQuery.calculatePagination();
+
+  return {
+    meta,
+    result,
+  };
+};
+
+const getSingleUserFromDB = async (id: string) => {
+  const user = await User.findById(id);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'user not found !');
+  }
+
+  return user;
+};
+
+const getMeFromDB = async (id: string, role: string) => {
+  const user = await User.findOne({ _id: id, role });
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'user not found !');
+  }
+
+  return user;
+};
+
+const deleteUserFromDB = async (id: string) => {
+  const user = await User.findByIdAndUpdate(id, { isDeleted: true });
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found !');
+  }
+
+  return user;
 };
 
 export const UserService = {
   registerIntoDB,
   updateProfileIntoDB,
-  makeRoleIntoDB,
+  makeAdminIntoDB,
+  getAllUsersFromDB,
+  getSingleUserFromDB,
+  deleteUserFromDB,
+  getMeFromDB,
 };
