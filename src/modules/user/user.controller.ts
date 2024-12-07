@@ -20,10 +20,11 @@ const register = catchAsync(async (req, res) => {
   });
 });
 
-// UPDATE PROFILE
+// UPDATE PROFILE OR UPDATE ME
 const updateProfile = catchAsync(async (req, res) => {
   const updatedProfile = await UserService.updateProfileIntoDB(
     req.user._id,
+    req.user.role,
     req.file as IFile,
     req.body,
   );

@@ -19,7 +19,7 @@ router.post(
 );
 
 router.patch(
-  '/profile-update/:id',
+  '/profile-update',
   auth(
     USER_ROLE.superAdmin,
     USER_ROLE.admin,

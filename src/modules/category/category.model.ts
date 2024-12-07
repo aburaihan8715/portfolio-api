@@ -29,9 +29,18 @@ categorySchema.pre(/^find/, function (this: Query<any, ICategory>, next) {
 
 //========= DOCUMENT MIDDLEWARE POST (save and find)========
 // remove password from send data
-categorySchema.post('save', function (doc, next) {
-  (doc as Partial<ICategory>).__v = undefined;
-  next();
+categorySchema.set('toObject', {
+  transform: (_doc, ret) => {
+    delete ret.__v;
+    return ret;
+  },
+});
+
+categorySchema.set('toJSON', {
+  transform: (_doc, ret) => {
+    delete ret.__v;
+    return ret;
+  },
 });
 
 export const Category = model<ICategory>('Category', categorySchema);

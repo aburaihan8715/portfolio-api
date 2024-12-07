@@ -71,7 +71,7 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-//======== DOCUMENT MIDDLEWARE PRE (save and find)=========
+//======== 01 DOCUMENT MIDDLEWARE PRE (save and find)=========
 userSchema.pre('save', async function (next) {
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
@@ -93,17 +93,27 @@ userSchema.pre(/^find/, function (this: Query<any, IUser>, next) {
   next();
 });
 
-//========= DOCUMENT MIDDLEWARE POST (save and find)========
-// remove password from send data
-userSchema.post('save', function (doc, next) {
-  // doc.password = '';
-  // delete (doc as Partial<IUser>).password;
-  (doc as Partial<IUser>).password = undefined;
-  (doc as Partial<IUser>).__v = undefined;
-  next();
+//========= 02 DOCUMENT MIDDLEWARE POST (save and find)========
+
+//========= 03 TRANSFORM ALL RETURN DOCUMENTS ========
+// remove password (if exists) and __v from any return documents
+userSchema.set('toObject', {
+  transform: (_doc, ret) => {
+    delete ret.__v;
+    delete ret.password;
+    return ret;
+  },
 });
 
-//============ STATIC METHODS ==============
+userSchema.set('toJSON', {
+  transform: (_doc, ret) => {
+    delete ret.__v;
+    delete ret.password;
+    return ret;
+  },
+});
+
+//============ 04 STATIC METHODS ==============
 userSchema.statics.getUserById = async function (id: string) {
   return await User.findOne({ _id: id }).select('+password');
 };

@@ -17,6 +17,7 @@ const registerIntoDB = async (file: IFile, payload: IUser) => {
 
 const updateProfileIntoDB = async (
   id: string,
+  role: string,
   file: IFile,
   payload: Pick<IUser, 'name' | 'profilePhoto' | 'address' | 'phone'>,
 ) => {
@@ -24,36 +25,28 @@ const updateProfileIntoDB = async (
   if (file && file.path) {
     payload.profilePhoto = file.path;
   }
-  // check user exists
-  let user = await User.getUserById(id);
 
-  if (!user) {
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: id, role },
+    payload,
+    { new: true, runValidators: true },
+  );
+
+  if (!updatedUser) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found !');
   }
 
-  // update the password field
-  user = (await User.findByIdAndUpdate(id, payload, {
-    new: true,
-  })) as IUser;
-
-  // delete password form the user
-  const { password, __v, ...userWithoutPassword } = user.toObject();
-
-  // return tokens and user to the controller
-  return userWithoutPassword;
+  return updatedUser;
 };
 
 const makeAdminIntoDB = async (id: string) => {
-  const user = (await User.findByIdAndUpdate(
+  const adminUser = (await User.findByIdAndUpdate(
     id,
     { role: 'admin' },
     { new: true },
   )) as IUser;
 
-  // delete password form the user
-  const { password, __v, ...userWithoutPassword } = user.toObject();
-
-  return userWithoutPassword;
+  return adminUser;
 };
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
