@@ -15,24 +15,38 @@ const createShopIntoDB = async (file: IFile, payload: IShop) => {
 
 const updateShopIntoDB = async (
   shopId: string,
-  vendorId: string,
-  file: IFile,
+  currentUserId: string,
+  file: IFile | null,
   payload: Pick<IShop, 'name' | 'logo' | 'description'>,
 ) => {
-  if (file && file.path) {
+  if (file?.path) {
     payload.logo = file.path;
   }
 
+  const shop = await Shop.findById(shopId);
+  if (!shop) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Shop not found!');
+  }
+
+  // Authorization check
+  const isAuthorized = shop.vendor.toString() === currentUserId;
+  if (!isAuthorized) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'You are not authorized to update this shop!!',
+    );
+  }
+
   const updatedShop = await Shop.findOneAndUpdate(
-    { _id: shopId, vendorId },
+    { _id: shop._id },
     payload,
     { new: true, runValidators: true },
   );
 
   if (!updatedShop) {
     throw new AppError(
-      httpStatus.NOT_FOUND,
-      'Shop not found or does not match the vendor!',
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Failed to update shop!',
     );
   }
 
@@ -70,7 +84,7 @@ const deleteShopFromDB = async (
   const isAuthorized =
     role === 'admin' ||
     role === 'superAdmin' ||
-    (role === 'vendor' && shop.vendorId.toString() === userId);
+    (role === 'vendor' && shop.vendor.toString() === userId);
 
   if (!isAuthorized) {
     throw new AppError(

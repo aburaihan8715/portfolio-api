@@ -6,3 +6,5 @@ export interface IFile {
   path: string;
   filename: string;
 }
+
+export type TFiles = IFile[];

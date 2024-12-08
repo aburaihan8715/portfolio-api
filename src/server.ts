@@ -1,22 +1,18 @@
-import mongoose from 'mongoose';
-import app from './app';
+import mongoose, { Error } from 'mongoose';
 import envConfig from './config/env.config';
 import { Server } from 'http';
+import app from './app';
 
 let server: Server;
 
-process.on('uncaughtException', (error) => {
-  console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-  console.error('Uncaught Exception Error:', error);
-  process.exit(1);
-});
+// UNCAUGHT EXCEPTION
+process.on('uncaughtException', (err) => {
+  console.log('UNCAUGHT EXCEPTION DETECTED! 💥 Shutting down...');
+  console.log('Error name:=>', err.name);
+  console.log('Error message:=>', err.message);
 
-process.on('unhandledRejection', (error) => {
-  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-  console.error('Unhandled Rejection Error:', error);
   if (server) {
     server.close(() => {
-      console.error('Server closed due to unhandled rejection');
       process.exit(1);
     });
   } else {
@@ -25,19 +21,30 @@ process.on('unhandledRejection', (error) => {
 });
 
 async function main() {
-  try {
-    await mongoose.connect(envConfig.DATABASE_URL as string);
-    console.log('🛢 Database connected successfully');
+  await mongoose
+    .connect(envConfig.DATABASE_URL as string, {})
+    .then(() => console.log('🛢 Database connected successfully'));
 
-    app.listen(envConfig.PORT, () => {
-      console.log(
-        `🚀 Application is running at http://localhost:${envConfig.PORT}`,
-      );
+  const port = process.env.PORT;
+  server = app.listen(port, () => {
+    console.log(
+      `🚀 Application is running at http://localhost:${envConfig.PORT}`,
+    );
+  });
+}
+main();
+
+// UNHANDLED REJECTIONS
+process.on('unhandledRejection', (err: Error) => {
+  console.log('UNHANDLED REJECTION DETECTED! 💥 Shutting down...');
+  console.log('Error name:=>', err.name);
+  console.log('Error message:=>', err.message);
+
+  if (server) {
+    server.close(() => {
+      process.exit(1);
     });
-  } catch (err) {
-    console.error('Failed to connect to database:', err);
+  } else {
     process.exit(1);
   }
-}
-
-main();
+});

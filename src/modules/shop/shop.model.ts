@@ -17,7 +17,7 @@ const shopSchema = new Schema<IShop>(
       default: '',
     },
 
-    vendorId: {
+    vendor: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -54,13 +54,6 @@ shopSchema.pre(/^find/, function (this: Query<any, IShop>, next) {
 });
 
 //========= 02 DOCUMENT MIDDLEWARE POST (save and find)========
-
-// remove password from send data
-// shopSchema.post('save', function (doc, next) {
-//   (doc as Partial<IShop>).__v = undefined;
-//   next();
-// });
-
 //========= 03 TRANSFORM ALL RETURN DOCUMENT ========
 // these are remove __v from all return data
 shopSchema.set('toObject', {
