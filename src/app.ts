@@ -3,14 +3,11 @@ import httpStatus from 'http-status';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 
-import { AuthRouter } from './modules/auth/auth.route';
 import envConfig from './config/env.config';
 import notFound from './middlewares/notFound';
 import globalError from './middlewares/globalError';
-import { UserRouter } from './modules/user/user.route';
-import { CategoryRouter } from './modules/category/category.route';
-import { ShopRouter } from './modules/shop/shop.route';
-import { ProductRouter } from './modules/product/product.route';
+
+import router from './routes';
 
 const app = express();
 
@@ -36,11 +33,7 @@ app.get('/', (req, res) => {
 });
 
 // ROUTES
-app.use('/api/v1/auth', AuthRouter);
-app.use('/api/v1/users', UserRouter);
-app.use('/api/v1/categories', CategoryRouter);
-app.use('/api/v1/shops', ShopRouter);
-app.use('/api/v1/products', ProductRouter);
+app.use('/api/v1', router);
 
 // NOT FOUND ROUTE
 app.use(notFound);
