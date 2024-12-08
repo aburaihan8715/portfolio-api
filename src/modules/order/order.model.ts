@@ -3,7 +3,7 @@ import { Query, Schema, model } from 'mongoose';
 import { IOrder, IOrderProduct } from './order.interface';
 
 // Product Sub-document Schema
-const OrderProductSchema = new Schema<IOrderProduct>(
+const orderProductSchema = new Schema<IOrderProduct>(
   {
     product: {
       type: Schema.Types.ObjectId,
@@ -29,7 +29,7 @@ const orderSchema = new Schema<IOrder>(
       required: true,
     },
     products: {
-      type: [OrderProductSchema],
+      type: [orderProductSchema],
       required: true,
     },
     totalAmount: {
@@ -42,9 +42,10 @@ const orderSchema = new Schema<IOrder>(
       enum: ['PENDING', 'COMPLETED', 'CANCELED'],
       default: 'PENDING',
     },
-    transactionId: {
-      type: String,
-      required: true,
+    payment: {
+      type: Schema.Types.ObjectId,
+      ref: 'Payment',
+      default: null,
     },
   },
 

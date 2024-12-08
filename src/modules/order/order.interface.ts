@@ -13,7 +13,7 @@ export interface IOrder extends Document {
   shop: Types.ObjectId;
   products: IOrderProduct[];
   totalAmount: number;
-  status: 'PENDING' | 'COMPLETED' | 'CANCELED';
-  transactionId: string;
+  status?: 'PENDING' | 'COMPLETED' | 'CANCELED';
+  payment?: Types.ObjectId;
   __v: number;
 }
