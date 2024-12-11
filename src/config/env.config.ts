@@ -8,6 +8,7 @@ export default {
   DATABASE_URL: process.env.DATABASE_URL_ATLAS,
   BCRYPT_SALT_ROUNDS: process.env.BCRYPT_SALT_ROUNDS,
   PASSWORD_RESET_UI_LINK: process.env.PASSWORD_RESET_UI_LINK,
+  CLIENT_URL: process.env.CLIENT_URL,
 
   JWT: {
     jwt_access_secret: process.env.JWT_ACCESS_SECRET,

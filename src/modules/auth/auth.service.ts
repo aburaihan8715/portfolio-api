@@ -197,7 +197,12 @@ const forgetPassword = async (email: string) => {
     envConfig.JWT.jwt_password_reset_expires_in as string,
   );
 
-  const passwordResetUiLink = `${envConfig.PASSWORD_RESET_UI_LINK}?email=${user.email}&token=${resetToken} `;
+  const URL =
+    envConfig.NODE_ENV === 'production'
+      ? envConfig.PASSWORD_RESET_UI_LINK
+      : 'http://localhost:5173/reset-password';
+
+  const passwordResetUiLink = `${URL}?email=${user.email}&token=${resetToken} `;
 
   // Load the email template
   const templatePath = path.join(

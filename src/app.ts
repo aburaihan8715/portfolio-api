@@ -13,9 +13,9 @@ import router from './routes';
 const app: Application = express();
 
 const allowedOrigin =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:5000'
-    : 'http://localhost:5000'; // add live url
+  process.env.NODE_ENV === 'production'
+    ? `${envConfig.CLIENT_URL}`
+    : 'http://localhost:5173';
 
 // GLOBAL MIDDLEWARES
 app.use(express.json());
