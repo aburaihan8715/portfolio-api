@@ -1,7 +1,8 @@
-import express from 'express';
+import express, { Application } from 'express';
 import httpStatus from 'http-status';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import envConfig from './config/env.config';
 import notFound from './middlewares/notFound';
@@ -9,7 +10,12 @@ import globalError from './middlewares/globalError';
 
 import router from './routes';
 
-const app = express();
+const app: Application = express();
+
+const allowedOrigin =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:5000'
+    : 'http://localhost:5000'; // add live url
 
 // GLOBAL MIDDLEWARES
 app.use(express.json());
@@ -17,6 +23,12 @@ app.use(cookieParser());
 if (envConfig.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+app.use(
+  cors({
+    origin: allowedOrigin,
+    credentials: true,
+  }),
+);
 
 // TEST MIDDLEWARE
 app.use((req, res, next) => {
