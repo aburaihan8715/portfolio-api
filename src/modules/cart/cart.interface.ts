@@ -1,13 +1,16 @@
 import { Document, Types } from 'mongoose';
+import { IProduct } from '../product/product.interface';
 
 export interface ICartItem {
-  product: Types.ObjectId;
+  product: Types.ObjectId | IProduct;
   quantity: number;
 }
 export interface ICart extends Document {
   _id: string;
-  user: Types.ObjectId;
+  user: Types.ObjectId | string;
   items: ICartItem[];
-  totalAmount: number;
+  totalItems?: number;
+  totalAmount?: number;
+  isDeleted?: number;
   __v: number;
 }

@@ -1,6 +1,4 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import AppError from '../../errors/AppError';
-import httpStatus from 'http-status';
 
 const createToken = (
   payload: Record<string, unknown>,
@@ -25,12 +23,9 @@ const createToken = (
 const verifyToken = async (token: string, secret: string) => {
   try {
     return jwt.verify(token, secret) as JwtPayload;
-  } catch (err) {
-    console.log('Unauthorize OR failed to verify token', err);
-    throw new AppError(
-      httpStatus.UNAUTHORIZED,
-      'Unauthorize OR failed to verify token',
-    );
+  } catch (error) {
+    console.log('Failed to verify token', error);
+    throw error;
   }
 };
 

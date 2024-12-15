@@ -1,12 +1,14 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import sendNotFoundDataResponse from '../../utils/sendNotFoundDataResponse';
 import { CartService } from './cart.service';
+import sendNotFoundDataResponse from '../../utils/sendNotFoundDataResponse';
 
-// CREATE Cart
 const createCart = catchAsync(async (req, res) => {
-  const newCart = await CartService.createCartIntoDB(req.body);
+  const newCart = await CartService.createCartIntoDB(
+    req.user._id,
+    req.body,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -17,64 +19,37 @@ const createCart = catchAsync(async (req, res) => {
 });
 
 // UPDATE Cart
-const updateCart = catchAsync(async (req, res) => {
-  const updatedCart = await CartService.updateCartIntoDB(
-    req.params.id,
-    req.body,
-  );
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Cart updated successfully',
-    data: updatedCart,
-  });
-});
 
 // GET ALL CATEGORIES
-const getAllCategories = catchAsync(async (req, res) => {
-  const categories = await CartService.getAllCategoriesFromDB();
+const getCarts = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const carts = await CartService.getCartsFromDB(userId);
 
-  if (!categories || categories.length < 1) {
+  if (!carts || carts.length < 1) {
     return sendNotFoundDataResponse(res);
   }
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'All categories retrieved successfully!',
-    data: categories,
-  });
-});
-
-// GET SINGLE Cart
-const getSingleCart = catchAsync(async (req, res) => {
-  const Cart = await CartService.getSingleCartFromDB(req.params.id);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Cart retrieved successfully!',
-    data: Cart,
+    message: 'Carts retrieved successfully!',
+    data: carts,
   });
 });
 
 // DELETE Cart
-const deleteCart = catchAsync(async (req, res) => {
-  const deleteCart = await CartService.deleteCartFromDB(req.params.id);
+// const deleteCart = catchAsync(async (req, res) => {
+//   const deleteCart = await CartService.deleteCartFromDB(req.params.id);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Cart deleted successfully!',
-    data: deleteCart,
-  });
-});
+//   sendResponse(res, {
+//     statusCode: httpStatus.OK,
+//     success: true,
+//     message: 'Cart deleted successfully!',
+//     data: deleteCart,
+//   });
+// });
 
 export const CartController = {
   createCart,
-  getAllCategories,
-  getSingleCart,
-  updateCart,
-  deleteCart,
+  getCarts,
 };

@@ -4,19 +4,27 @@ import sendResponse from '../../utils/sendResponse';
 import { UserService } from './user.service';
 import { IFile } from '../../interface/file.interface';
 import sendNotFoundDataResponse from '../../utils/sendNotFoundDataResponse';
+import envConfig from '../../config/env.config';
 
 // CREATE OR REGISTER
 const register = catchAsync(async (req, res) => {
-  const newUser = await UserService.registerIntoDB(
+  const newUserInfo = await UserService.registerIntoDB(
     req.file as IFile,
     req.body,
   );
 
+  const { refreshToken, accessToken, userWithoutPassword } = newUserInfo;
+
+  res.cookie('refreshToken', refreshToken, {
+    secure: envConfig.NODE_ENV === 'production',
+    httpOnly: true,
+  });
+
   sendResponse(res, {
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     success: true,
-    message: 'User created successfully!',
-    data: newUser,
+    message: 'User registered successfully',
+    data: { accessToken, user: userWithoutPassword },
   });
 });
 

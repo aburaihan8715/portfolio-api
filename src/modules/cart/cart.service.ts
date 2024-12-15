@@ -3,43 +3,53 @@ import httpStatus from 'http-status';
 import { ICart } from './cart.interface';
 import { Cart } from './cart.model';
 
-// CREATE Cart
-const createCartIntoDB = async (payload: ICart) => {
-  const result = await Cart.create(payload);
-  return result;
-};
+const createCartIntoDB = async (userId: string, payload: ICart) => {
+  const cartData = { user: userId, items: payload.items };
 
-const updateCartIntoDB = async (id: string, payload: Partial<ICart>) => {
-  const updatedCart = await Cart.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!updatedCart) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Cart could not be updated!');
-  }
-
-  // delete password form the user
-  const { __v, ...remainingCart } = updatedCart.toObject();
-
-  // return tokens and user to the controller
-  return remainingCart;
-};
-
-const getAllCategoriesFromDB = async () => {
-  const categories = await Cart.find({});
-
-  return categories;
-};
-
-const getSingleCartFromDB = async (id: string) => {
-  const cart = await Cart.findById(id);
+  let cart = await Cart.findOne({ user: userId });
 
   if (!cart) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Cart not found !');
+    cart = await Cart.create(cartData);
+  } else {
+    cart.items.push(...payload.items);
+    await cart.save();
   }
 
-  return Cart;
+  return cart;
+};
+
+// const createCartIntoDB = async (userId: string, payload: ICart) => {
+//   // Update or create the cart
+//   const cart = await Cart.findOneAndUpdate(
+//     { user: userId },
+//     { $addToSet: { items: { $each: payload.items } } },
+//     { new: true, upsert: true },
+//   ).populate('items.product'); // Populate product to access its price
+
+//   if (!cart) {
+//     throw new Error('Failed to create or update the cart');
+//   }
+
+//   // Calculate totalItems and totalAmount
+//   cart.totalItems = cart.items.reduce(
+//     (total, item) => total + item.quantity,
+//     0,
+//   );
+
+//   cart.totalAmount = cart.items.reduce((total, item) => {
+//     const productPrice = (item.product as any).price || 0; // Access the product's price
+//     return total + productPrice * item.quantity;
+//   }, 0);
+
+//   await cart.save(); // Save the cart with the updated values
+
+//   return cart;
+// };
+
+const getCartsFromDB = async (userId: string) => {
+  const result = await Cart.find({ user: userId });
+
+  return result;
 };
 
 const deleteCartFromDB = async (id: string) => {
@@ -58,8 +68,6 @@ const deleteCartFromDB = async (id: string) => {
 
 export const CartService = {
   createCartIntoDB,
-  updateCartIntoDB,
-  getAllCategoriesFromDB,
-  getSingleCartFromDB,
+  getCartsFromDB,
   deleteCartFromDB,
 };

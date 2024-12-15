@@ -1,5 +1,5 @@
 {
-  "name": "asgmt9_e_commerce_api",
+  "name": "asgmt9_multi_vendor_e_commerce_api",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -31,6 +31,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.16",
+    "stripe": "^17.4.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

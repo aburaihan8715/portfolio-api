@@ -9,3 +9,16 @@
   "format": "prettier --write ."
 }
 4. add rules
+
+
+## Live link server:
+https://asgmt9-multi-vendor-e-commerce-api.vercel.app
+
+## Github link server:
+https://github.com/aburaihan8715/asgmt9_multi_vendor_e_commerce_api
+
+## Live link client:
+https://asgmt9-multi-vendor-e-commerce.netlify.app
+
+## Github link client:
+https://github.com/aburaihan8715/asgmt9_multi_vendor_e_commerce_ui

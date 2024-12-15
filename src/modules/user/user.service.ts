@@ -1,6 +1,8 @@
 import QueryBuilder from '../../builder/QueryBuilder';
+import envConfig from '../../config/env.config';
 import AppError from '../../errors/AppError';
 import { IFile } from '../../interface/file.interface';
+import { AuthUtils } from '../auth/auth.utils';
 import { IUser } from '../user/user.interface';
 import { User } from '../user/user.model';
 import httpStatus from 'http-status';
@@ -10,9 +12,41 @@ const registerIntoDB = async (file: IFile, payload: IUser) => {
   if (file && file.path) {
     payload.profilePhoto = file.path;
   }
-  const result = await User.create(payload);
 
-  return result;
+  const user = await User.create(payload);
+
+  if (!user) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user !');
+  }
+
+  // create accessToken and refreshToken
+  const jwtPayload = {
+    _id: user._id,
+    email: user.email,
+    role: user.role as string,
+  };
+
+  const accessToken = AuthUtils.createToken(
+    jwtPayload,
+    envConfig.JWT.jwt_access_secret as string,
+    envConfig.JWT.jwt_access_expires_in as string,
+  );
+
+  const refreshToken = AuthUtils.createToken(
+    jwtPayload,
+    envConfig.JWT.jwt_refresh_secret as string,
+    envConfig.JWT.jwt_refresh_expires_in as string,
+  );
+
+  // delete password form the user
+  const { password, __v, ...userWithoutPassword } = user.toObject();
+
+  // return tokens and user to the controller
+  return {
+    accessToken,
+    refreshToken,
+    userWithoutPassword,
+  };
 };
 
 const updateProfileIntoDB = async (

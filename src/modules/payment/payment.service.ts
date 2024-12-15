@@ -1,71 +1,27 @@
-import AppError from '../../errors/AppError';
-import httpStatus from 'http-status';
-import { IPayment } from './payment.interface';
+import Stripe from 'stripe';
+import { TPayment } from './payment.interface';
 import { Payment } from './payment.model';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-// CREATE Payment
-const createPaymentIntoDB = async (payload: IPayment) => {
-  const result = await Payment.create(payload);
-  return result;
-};
+// CREATE
+const createPaymentIntent = async (payload: { price: number }) => {
+  const amount = Math.trunc(payload.price * 100);
 
-const updatePaymentIntoDB = async (
-  id: string,
-  payload: Partial<IPayment>,
-) => {
-  const updatedPayment = await Payment.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: 'usd',
+    payment_method_types: ['card'],
   });
 
-  if (!updatedPayment) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      'Payment could not be updated!',
-    );
-  }
-
-  // delete password form the user
-  const { __v, ...remainingPayment } = updatedPayment.toObject();
-
-  // return tokens and user to the controller
-  return remainingPayment;
+  return { clientSecret: paymentIntent.client_secret };
 };
 
-const getAllCategoriesFromDB = async () => {
-  const categories = await Payment.find({});
-
-  return categories;
-};
-
-const getSinglePaymentFromDB = async (id: string) => {
-  const payment = await Payment.findById(id);
-
-  if (!payment) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Payment not found !');
-  }
-
-  return Payment;
-};
-
-const deletePaymentFromDB = async (id: string) => {
-  const deletedPayment = await Payment.findByIdAndUpdate(
-    id,
-    { isDeleted: true },
-    { new: true },
-  );
-
-  if (!deletedPayment) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Payment not found !');
-  }
-
-  return deletedPayment;
+const createPaymentIntoDB = async (payload: TPayment) => {
+  const newPayment = await Payment.create(payload);
+  return newPayment;
 };
 
 export const PaymentService = {
+  createPaymentIntent,
   createPaymentIntoDB,
-  updatePaymentIntoDB,
-  getAllCategoriesFromDB,
-  getSinglePaymentFromDB,
-  deletePaymentFromDB,
 };

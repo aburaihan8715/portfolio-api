@@ -19,7 +19,7 @@ const login = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'User logged in successfully',
-    data: { accessToken, userWithoutPassword },
+    data: { accessToken, user: userWithoutPassword },
   });
 });
 
@@ -67,8 +67,7 @@ const forgetPassword = catchAsync(async (req, res) => {
 
 // RESET PASSWORD
 const resetPassword = catchAsync(async (req, res) => {
-  const token = req.headers.authorization as string;
-
+  const token = req.headers.authorization?.split(' ')[1] as string;
   const result = await AuthService.resetPassword(req.body, token);
   sendResponse(res, {
     statusCode: httpStatus.OK,

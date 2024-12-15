@@ -27,12 +27,12 @@ const globalError: ErrorRequestHandler = (err, req, res, _next) => {
   const stack = envConfig.NODE_ENV === 'development' ? err?.stack : null;
 
   if (err.name === 'JsonWebTokenError') {
-    const simplifiedError = handleJWTError(err);
+    const simplifiedError = handleJWTError();
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
   } else if (err.name === 'TokenExpiredError') {
-    const simplifiedError = handleJWTExpiredError(err);
+    const simplifiedError = handleJWTExpiredError();
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;

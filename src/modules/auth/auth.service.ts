@@ -17,21 +17,21 @@ import { sendEmailV2 } from '../../utils/sendEmailV2';
 
 // LOGIN
 const loginIntoDB = async (payload: ILogin) => {
-  // 01. checking if the user is exist
+  // checking if the user is exist
   const user = await User.getUserByEmail(payload.email);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
   }
 
-  // 02. checking if the password is correct
+  // checking if the password is correct
   const isPasswordCorrect = await User.isPasswordCorrect(
     payload?.password,
     user?.password as string,
   );
   if (!isPasswordCorrect) throw new AppError(400, 'Wrong credentials!');
 
-  // 03. create accessToken and refreshToken
+  // create accessToken and refreshToken
   const jwtPayload = {
     _id: user._id,
     email: user.email,
@@ -50,11 +50,11 @@ const loginIntoDB = async (payload: ILogin) => {
     envConfig.JWT.jwt_refresh_expires_in as string,
   );
 
-  // 04. delete password form the user
+  // delete password form the user
   const { password, __v, ...userWithoutPassword } = user.toObject();
   // user.password = '';
 
-  // 05. return tokens and user to the controller
+  // return tokens and user to the controller
   return {
     accessToken,
     refreshToken,
