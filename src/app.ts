@@ -12,10 +12,10 @@ import router from './routes';
 
 const app: Application = express();
 
-const allowedOrigin =
-  process.env.NODE_ENV === 'production'
-    ? `${envConfig.CLIENT_URL}`
-    : 'http://localhost:5173';
+// const allowedOrigin =
+//   process.env.NODE_ENV === 'development'
+//     ? `'http://localhost:5173'`
+//     : `${envConfig.CLIENT_URL}`;
 
 // GLOBAL MIDDLEWARES
 app.use(express.json());
@@ -25,7 +25,7 @@ if (envConfig.NODE_ENV === 'development') {
 }
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: 'https://asgmt9-multi-vendor-e-commerce.netlify.app',
     credentials: true,
   }),
 );
