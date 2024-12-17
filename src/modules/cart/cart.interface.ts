@@ -11,6 +11,6 @@ export interface ICart extends Document {
   items: ICartItem[];
   totalItems?: number;
   totalAmount?: number;
-  isDeleted?: number;
+  isDeleted?: boolean;
   __v: number;
 }

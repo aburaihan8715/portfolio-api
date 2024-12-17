@@ -4,11 +4,8 @@ import sendResponse from '../../utils/sendResponse';
 import { CartService } from './cart.service';
 import sendNotFoundDataResponse from '../../utils/sendNotFoundDataResponse';
 
-const createCart = catchAsync(async (req, res) => {
-  const newCart = await CartService.createCartIntoDB(
-    req.user._id,
-    req.body,
-  );
+const addCart = catchAsync(async (req, res) => {
+  const newCart = await CartService.addCartIntoDB(req.user._id, req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -18,12 +15,9 @@ const createCart = catchAsync(async (req, res) => {
   });
 });
 
-// UPDATE Cart
-
-// GET ALL CATEGORIES
-const getCarts = catchAsync(async (req, res) => {
+const getCart = catchAsync(async (req, res) => {
   const userId = req.user._id;
-  const carts = await CartService.getCartsFromDB(userId);
+  const carts = await CartService.getCartFromDB(userId);
 
   if (!carts || carts.length < 1) {
     return sendNotFoundDataResponse(res);
@@ -37,19 +31,75 @@ const getCarts = catchAsync(async (req, res) => {
   });
 });
 
-// DELETE Cart
-// const deleteCart = catchAsync(async (req, res) => {
-//   const deleteCart = await CartService.deleteCartFromDB(req.params.id);
+const incrementQuantity = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const { productId } = req.params; // Assuming productId is passed in params
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Cart deleted successfully!',
-//     data: deleteCart,
-//   });
-// });
+  const updatedCart = await CartService.incrementQuantityIntoDB(
+    userId,
+    productId,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Product quantity incremented successfully!',
+    data: updatedCart,
+  });
+});
+
+const decrementQuantity = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const { productId } = req.params;
+
+  const updatedCart = await CartService.decrementQuantityIntoDB(
+    userId,
+    productId,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Product quantity decremented successfully!',
+    data: updatedCart,
+  });
+});
+
+const removeCartItem = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const productId = req.params.productId;
+
+  const updatedCart = await CartService.removeCartItemFromDB(
+    productId,
+    userId,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Cart item removed successfully!',
+    data: updatedCart,
+  });
+});
+
+const clearCart = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const cartId = req.params.id; // Assume cartId comes from params
+  const deletedCart = await CartService.clearCartFromDB(cartId, userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Cart deleted successfully!',
+    data: deletedCart,
+  });
+});
 
 export const CartController = {
-  createCart,
-  getCarts,
+  addCart,
+  getCart,
+  incrementQuantity,
+  decrementQuantity,
+  clearCart,
+  removeCartItem,
 };
