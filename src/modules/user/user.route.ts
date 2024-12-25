@@ -3,73 +3,63 @@ import { Router } from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import { UserValidation } from '../user/user.validation';
 import { UserController } from './user.controller';
-import multerUpload from '../../utils/fileUpload';
 import parseBodyString from '../../middlewares/parseBodyString';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from './user.constant';
+import UserImageUpload from './user.upload-file';
 
 const router = Router();
 
 router.post(
   '/register',
-  multerUpload.single('file'),
+  UserImageUpload.single('file'),
   parseBodyString(),
-  validateRequest(UserValidation.createValidationSchema),
+  validateRequest(UserValidation.registerValidationSchema),
   UserController.register,
+);
+
+router.post(
+  '/login',
+  validateRequest(UserValidation.loginValidationSchema),
+  UserController.login,
 );
 
 router.patch(
   '/profile-update',
-  auth(
-    USER_ROLE.superAdmin,
-    USER_ROLE.admin,
-    USER_ROLE.customer,
-    USER_ROLE.vendor,
-  ),
-  multerUpload.single('file'),
+  auth(USER_ROLE.admin),
+  UserImageUpload.single('file'),
   parseBodyString(),
   validateRequest(UserValidation.updateProfileValidationSchema),
   UserController.updateProfile,
 );
 
-router.patch(
-  '/make-admin/:id',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  UserController.makeAdmin,
+router.get('/me', auth(USER_ROLE.admin), UserController.getMe);
+
+router.get('/:id', auth(USER_ROLE.admin), UserController.getSingleUser);
+
+router.post(
+  '/change-password',
+  auth(USER_ROLE.admin),
+  validateRequest(UserValidation.changePasswordValidationSchema),
+  UserController.changePassword,
 );
 
-router.get(
-  '/',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  UserController.getAllUsers,
+router.post(
+  '/refresh-token',
+  validateRequest(UserValidation.refreshTokenValidationSchema),
+  UserController.refreshToken,
 );
 
-router.delete(
-  '/:id',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  UserController.deleteUser,
+router.post(
+  '/forget-password',
+  validateRequest(UserValidation.forgetPasswordValidationSchema),
+  UserController.forgetPassword,
 );
 
-router.get(
-  '/me',
-  auth(
-    USER_ROLE.superAdmin,
-    USER_ROLE.admin,
-    USER_ROLE.customer,
-    USER_ROLE.vendor,
-  ),
-  UserController.getMe,
-);
-
-router.get(
-  '/:id',
-  auth(
-    USER_ROLE.superAdmin,
-    USER_ROLE.admin,
-    USER_ROLE.customer,
-    USER_ROLE.vendor,
-  ),
-  UserController.getSingleUser,
+router.post(
+  '/reset-password',
+  validateRequest(UserValidation.forgetPasswordValidationSchema),
+  UserController.resetPassword,
 );
 
 export const UserRouter = router;

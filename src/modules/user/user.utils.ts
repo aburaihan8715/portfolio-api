@@ -29,4 +29,4 @@ const verifyToken = async (token: string, secret: string) => {
   }
 };
 
-export const AuthUtils = { createToken, verifyToken };
+export const UserUtils = { createToken, verifyToken };

@@ -10,10 +10,9 @@ export interface IUser extends Document {
   password: string;
   passwordConfirm: string | undefined;
   passwordChangedAt?: Date;
-  role: 'superAdmin' | 'admin' | 'customer' | 'vendor';
-  address?: string;
-  phone?: string;
+  role: 'admin';
   isDeleted: boolean;
+  createdAt: Date;
   __v: number;
 }
 
@@ -34,3 +33,8 @@ export interface IUserModel extends Model<IUser> {
 }
 
 export type TUserRole = keyof typeof USER_ROLE;
+
+export interface ILogin {
+  email: string;
+  password: string;
+}

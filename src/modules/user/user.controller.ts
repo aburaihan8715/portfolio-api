@@ -3,17 +3,28 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserService } from './user.service';
 import { IFile } from '../../interface/file.interface';
-import sendNotFoundDataResponse from '../../utils/sendNotFoundDataResponse';
 import envConfig from '../../config/env.config';
 
-// CREATE OR REGISTER
+// REGISTER
 const register = catchAsync(async (req, res) => {
-  const newUserInfo = await UserService.registerIntoDB(
+  const newUser = await UserService.registerIntoDB(
     req.file as IFile,
     req.body,
   );
 
-  const { refreshToken, accessToken, userWithoutPassword } = newUserInfo;
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User registered successfully',
+    data: newUser,
+  });
+});
+
+// LOGIN
+const login = catchAsync(async (req, res) => {
+  const userInfo = await UserService.loginIntoDB(req.body);
+
+  const { refreshToken, accessToken, userWithoutPassword } = userInfo;
 
   res.cookie('refreshToken', refreshToken, {
     secure: envConfig.NODE_ENV === 'production',
@@ -23,7 +34,7 @@ const register = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User registered successfully',
+    message: 'User logged in successfully',
     data: { accessToken, user: userWithoutPassword },
   });
 });
@@ -45,35 +56,6 @@ const updateProfile = catchAsync(async (req, res) => {
   });
 });
 
-// MAKE ROLE
-const makeAdmin = catchAsync(async (req, res) => {
-  const adminUser = await UserService.makeAdminIntoDB(req.params.id);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Admin made successfully',
-    data: adminUser,
-  });
-});
-
-// GET ALL USERS
-const getAllUsers = catchAsync(async (req, res) => {
-  const result = await UserService.getAllUsersFromDB(req.query);
-
-  if (!result || result?.result.length < 1) {
-    return sendNotFoundDataResponse(res);
-  }
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'All users retrieved successfully!',
-    meta: result.meta,
-    data: result.result,
-  });
-});
-
 // GET SINGLE USER
 const getSingleUser = catchAsync(async (req, res) => {
   const user = await UserService.getSingleUserFromDB(req.params.id);
@@ -82,18 +64,6 @@ const getSingleUser = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'User retrieved successfully!',
-    data: user,
-  });
-});
-
-// DELETE USER
-const deleteUser = catchAsync(async (req, res) => {
-  const user = await UserService.deleteUserFromDB(req.params.id);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'User deleted successfully!',
     data: user,
   });
 });
@@ -112,12 +82,68 @@ const getMe = catchAsync(async (req, res) => {
   });
 });
 
+// CHANGE PASSWORD
+const changePassword = catchAsync(async (req, res) => {
+  const { ...passwordData } = req.body;
+
+  const result = await UserService.changePasswordIntoDB(
+    req.user,
+    passwordData,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Password is changed successfully!',
+    data: result,
+  });
+});
+
+// REFRESH TOKEN
+const refreshToken = catchAsync(async (req, res) => {
+  const { refreshToken } = req.cookies;
+  const result = await UserService.getRefreshToken(refreshToken);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Refresh token is retrieved successfully!',
+    data: result,
+  });
+});
+
+// FORGET PASSWORD
+const forgetPassword = catchAsync(async (req, res) => {
+  const email = req.body.email;
+  const result = await UserService.forgetPassword(email);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Password reset link is generated successfully!',
+    data: result,
+  });
+});
+
+// RESET PASSWORD
+const resetPassword = catchAsync(async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1] as string;
+  const result = await UserService.resetPassword(req.body, token);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Password reset successful!',
+    data: result,
+  });
+});
+
 export const UserController = {
   register,
   updateProfile,
-  makeAdmin,
-  getAllUsers,
   getSingleUser,
-  deleteUser,
   getMe,
+  login,
+  changePassword,
+  refreshToken,
+  forgetPassword,
+  resetPassword,
 };

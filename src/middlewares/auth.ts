@@ -3,9 +3,10 @@ import { TUserRole } from '../modules/user/user.interface';
 import catchAsync from '../utils/catchAsync';
 import { User } from '../modules/user/user.model';
 import AppError from '../errors/AppError';
-import { AuthUtils } from '../modules/auth/auth.utils';
+
 import envConfig from '../config/env.config';
 import httpStatus from 'http-status';
+import { UserUtils } from '../modules/user/user.utils';
 
 const auth = (...roles: TUserRole[]) => {
   return catchAsync(async (req, res, next) => {
@@ -26,7 +27,7 @@ const auth = (...roles: TUserRole[]) => {
     }
 
     // verify the token
-    const decodedData = await AuthUtils.verifyToken(
+    const decodedData = await UserUtils.verifyToken(
       token,
       envConfig.JWT.jwt_access_secret as string,
     );
