@@ -28,8 +28,8 @@ app.use(
     origin: [
       'http://localhost:5173',
       'http://localhost:3000',
-      'https://melodious-platypus-519bb7.netlify.app',
-      'https://portfolio-client-nlb60z0so-aburaihan.vercel.app',
+      'https://admin-dashboard-for-portfolio.netlify.app',
+      'https://portfolio-client-jade.vercel.app',
     ],
     credentials: true,
   }),

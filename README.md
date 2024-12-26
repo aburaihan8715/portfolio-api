@@ -1,34 +1,32 @@
-# Project : asgmt9_multi_vendor_e_commerce_api
+# Project : Portfolio-api
 
 ## Live link server:
 
-https://asgmt9-multi-vendor-e-commerce-api.vercel.app
+https://portfolio-api-taupe.vercel.app
 
 ## Github link server:
 
-https://github.com/aburaihan8715/asgmt9_multi_vendor_e_commerce_api
+https://github.com/aburaihan8715/portfolio-api
 
 ## Live link client:
 
-https://asgmt9-multi-vendor-e-commerce.netlify.app
+https://portfolio-client-jade.vercel.app
 
 ## Github link client:
 
-https://github.com/aburaihan8715/asgmt9_multi_vendor_e_commerce_ui
+https://github.com/aburaihan8715/portfolio-client
+
+## Live link admin:
+
+https://admin-dashboard-for-portfolio.netlify.app
+
+## Github link admin:
+
+https://github.com/aburaihan8715/portfolio-admin
 
 ## Admin
 
-- email: aadmin@gmail.com
-- password: test1234
-
-## Vendor
-
-- email: avendor@gmail.com
-- password: test1234
-
-## Customer
-
-- email: acustomer@gmail.com
+- email: admin@gmail.com
 - password: test1234
 
 ## Technologies used:
@@ -37,7 +35,6 @@ https://github.com/aburaihan8715/asgmt9_multi_vendor_e_commerce_ui
 2. Node js
 3. Express js
 4. Mongodb
-5. Stripe
 
 ## Packages used:
 
@@ -46,10 +43,9 @@ https://github.com/aburaihan8715/asgmt9_multi_vendor_e_commerce_ui
 3. zod
 4. jwt
 5. eslint
-6. stripe
-7. multer
-8. cloudinary
-9. node mailer
+6. multer
+7. cloudinary
+8. node mailer
 
 ## Deploy
 
@@ -67,21 +63,23 @@ https://github.com/aburaihan8715/asgmt9_multi_vendor_e_commerce_ui
 
 ## API Endpoints
 
-## Auth:
+## Users:
 
-- /api/v1/auth/login(POST)
-- /api/v1/auth/register(POST)
-- /api/v1/auth/change-password(PATCH)
-- /api/v1/auth/refresh-token(POST)
-- /api/v1/auth/forget-password(POST)
-- /api/v1/auth/reset-password(PATCH)
-- /api/v1/auth/update-profile(PATCH)
+- /api/v1/users/login(POST)
+- /api/v1/users/register(POST)
+- /api/v1/users/change-password(PATCH)
+- /api/v1/users/refresh-token(POST)
+- /api/v1/users/forget-password(POST)
+- /api/v1/users/reset-password(PATCH)
+- /api/v1/users/update-profile(PATCH)
 
-## Category:
+## Experiences:
 
-## Comment:
+## Projects:
 
-## Payment:
+## Blogs:
+
+## Skills:
 
 ## Scripts
 
