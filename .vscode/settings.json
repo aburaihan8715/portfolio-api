@@ -35,6 +35,7 @@
     "asgmt",
     "fieldname",
     "fluidjs",
-    "respawn"
+    "respawn",
+    "tseslint"
   ]
 }

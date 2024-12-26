@@ -25,7 +25,12 @@ if (envConfig.NODE_ENV === 'development') {
 }
 app.use(
   cors({
-    origin: '*',
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://melodious-platypus-519bb7.netlify.app',
+      'https://portfolio-client-nlb60z0so-aburaihan.vercel.app',
+    ],
     credentials: true,
   }),
 );
