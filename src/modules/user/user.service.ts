@@ -260,9 +260,9 @@ const forgetPassword = async (email: string) => {
   );
 
   const URL =
-    envConfig.NODE_ENV === 'production'
-      ? envConfig.PASSWORD_RESET_UI_LINK
-      : 'http://localhost:5173/reset-password';
+    envConfig.NODE_ENV === 'development'
+      ? 'http://localhost:5173/reset-password'
+      : envConfig.PASSWORD_RESET_UI_LINK;
 
   const passwordResetUiLink = `${URL}?email=${user.email}&token=${resetToken} `;
 

@@ -24,7 +24,7 @@ https://admin-dashboard-for-portfolio.netlify.app
 
 https://github.com/aburaihan8715/portfolio-admin
 
-## Admin
+## Admin credentials
 
 - email: admin@gmail.com
 - password: test1234
