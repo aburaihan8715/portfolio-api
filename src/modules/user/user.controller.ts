@@ -22,6 +22,7 @@ const register = catchAsync(async (req, res) => {
 
 // LOGIN
 const login = catchAsync(async (req, res) => {
+  console.log(req.body);
   const userInfo = await UserService.loginIntoDB(req.body);
 
   const { refreshToken, accessToken, userWithoutPassword } = userInfo;
