@@ -7,7 +7,6 @@ const registerValidationSchema = z.object({
       email: z
         .string({ required_error: 'Email is required' })
         .email('Invalid email format'),
-      profilePhoto: z.string().optional().default(''),
       password: z
         .string({ required_error: 'Password is required' })
         .min(8, 'Password must be at least 8 characters long'),
@@ -15,11 +14,7 @@ const registerValidationSchema = z.object({
         required_error: 'password confirm is required',
       }),
       passwordChangedAt: z.date().nullable().optional(),
-      role: z
-        .enum(['superAdmin', 'admin', 'customer', 'vendor'])
-        .default('customer'),
-      address: z.string().optional().default(''),
-      phone: z.string().optional().default(''),
+      role: z.enum(['admin']).default('admin'),
       isDeleted: z.boolean().optional().default(false),
     })
     .superRefine((data, ctx) => {
@@ -46,8 +41,6 @@ const updateProfileValidationSchema = z.object({
   body: z.object({
     name: z.string({ required_error: 'Name is required' }).optional(),
     profilePhoto: z.string().optional(),
-    address: z.string().optional(),
-    phone: z.string().optional(),
   }),
 });
 

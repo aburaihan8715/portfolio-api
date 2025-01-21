@@ -7,10 +7,7 @@ import envConfig from '../../config/env.config';
 
 // REGISTER
 const register = catchAsync(async (req, res) => {
-  const newUser = await UserService.registerIntoDB(
-    req.file as IFile,
-    req.body,
-  );
+  const newUser = await UserService.registerIntoDB(req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -22,7 +19,6 @@ const register = catchAsync(async (req, res) => {
 
 // LOGIN
 const login = catchAsync(async (req, res) => {
-  console.log(req.body);
   const userInfo = await UserService.loginIntoDB(req.body);
 
   const { refreshToken, accessToken, userWithoutPassword } = userInfo;
@@ -128,6 +124,7 @@ const forgetPassword = catchAsync(async (req, res) => {
 // RESET PASSWORD
 const resetPassword = catchAsync(async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1] as string;
+
   const result = await UserService.resetPassword(req.body, token);
   sendResponse(res, {
     statusCode: httpStatus.OK,

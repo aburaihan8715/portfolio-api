@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import validateRequest from '../../middlewares/validateRequest';
-import { UserValidation } from '../user/user.validation';
+import { UserValidation } from './user.validation';
 import { UserController } from './user.controller';
 import parseBodyString from '../../middlewares/parseBodyString';
 import auth from '../../middlewares/auth';
@@ -12,8 +12,6 @@ const router = Router();
 
 router.post(
   '/register',
-  UserImageUpload.single('file'),
-  parseBodyString(),
   validateRequest(UserValidation.registerValidationSchema),
   UserController.register,
 );

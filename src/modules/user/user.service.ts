@@ -7,19 +7,15 @@ import handlebars from 'handlebars';
 import { convert } from 'html-to-text';
 
 import { IFile } from '../../interface/file.interface';
-import { ILogin, IUser } from '../user/user.interface';
+import { ILogin, IUser } from './user.interface';
 import AppError from '../../errors/AppError';
-import { User } from '../user/user.model';
+import { User } from './user.model';
 import envConfig from '../../config/env.config';
 import { sendEmailV2 } from '../../utils/sendEmailV2';
 import { UserUtils } from './user.utils';
 
 // REGISTER
-const registerIntoDB = async (file: IFile, payload: IUser) => {
-  if (file && file.path) {
-    payload.profilePhoto = file.path;
-  }
-
+const registerIntoDB = async (payload: IUser) => {
   const newUser = await User.create(payload);
 
   if (!newUser) {
@@ -261,7 +257,7 @@ const forgetPassword = async (email: string) => {
 
   const URL =
     envConfig.NODE_ENV === 'development'
-      ? 'http://localhost:5173/reset-password'
+      ? 'http://localhost:5173/auth/reset-password'
       : envConfig.PASSWORD_RESET_UI_LINK;
 
   const passwordResetUiLink = `${URL}?email=${user.email}&token=${resetToken} `;
@@ -344,3 +340,7 @@ export const UserService = {
   forgetPassword,
   resetPassword,
 };
+
+/*
+http://localhost:5173/auth/reset-password?email=aburaihan8721@gmail.com&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzhiYmIxZjY2ZjlhOTUyMGViZmQzZmUiLCJlbWFpbCI6ImFidXJhaWhhbjg3MjFAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3MjEyMzYxLCJleHAiOjE3MzcyMTI5NjF9.QwXh_vVTaDdmNdS6TqrGkdk1bE1vWEEOND2mVDgienQ
+*/

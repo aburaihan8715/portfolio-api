@@ -6,10 +6,26 @@ const projectSchema = new Schema<IProject>({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
 
-  image: {
+  coverImage: {
     type: String,
     default: '',
+  },
+  overview: {
+    type: String,
+    required: true,
+  },
+  techStack: {
+    type: [String],
+    required: true,
+  },
+  links: {
+    type: [String],
+    required: true,
   },
 
   createdAt: {

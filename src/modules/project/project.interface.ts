@@ -4,7 +4,11 @@ import { Document } from 'mongoose';
 export interface IProject extends Document {
   _id: string;
   name: string;
-  image?: string;
+  type: string;
+  coverImage?: string;
+  overview: string;
+  techStack: string[];
+  links: string[];
   createdAt: Date;
   __v: number;
 }

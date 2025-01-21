@@ -14,7 +14,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'uploads', // Optional: Folder for uploaded files in Cloudinary
+    folder: 'portfolio/projects', // Optional: Folder for uploaded files in Cloudinary
     allowed_formats: ['jpg', 'jpeg', 'png'], // Optional: Restrict allowed file types
     transformation: [{ width: 800, height: 700, crop: 'limit' }], // Optional: Apply image transformations on upload
   },
