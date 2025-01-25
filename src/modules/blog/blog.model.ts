@@ -7,9 +7,14 @@ const blogSchema = new Schema<IBlog>({
     required: true,
   },
 
-  desc: {
+  overview: {
     type: String,
     required: true,
+  },
+
+  coverImage: {
+    type: String,
+    default: '',
   },
 
   content: {
@@ -17,9 +22,9 @@ const blogSchema = new Schema<IBlog>({
     required: true,
   },
 
-  image: {
+  category: {
     type: String,
-    default: '',
+    required: true,
   },
 
   createdAt: {
