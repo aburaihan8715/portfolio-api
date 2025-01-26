@@ -1,0 +1,728 @@
+{
+	"info": {
+		"_postman_id": "d030c607-c36e-49ca-a574-5bb288d3a4e3",
+		"name": "PORTFOLIO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15175363"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Abu Raihan\",\r\n    \"email\": \"aburaihan8721@gmail.com\",\r\n    \"password\": \"test1234\",\r\n    \"passwordConfirm\": \"test1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const accessToken=pm.response.json().data.accessToken;\r",
+									"pm.environment.set(\"accessToken\", accessToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"test1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/E:/Raihan/myimage.png"
+								},
+								{
+									"key": "data",
+									"value": "{\n    \"name\": \"admin upadted\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/profile-update",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"profile-update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"test12345\",\r\n    \"newPassword\": \"test1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/change-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzhiYmIxZjY2ZjlhOTUyMGViZmQzZmUiLCJlbWFpbCI6ImFidXJhaWhhbjg3MjFAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3MjEyMzYxLCJleHAiOjE3MzcyMTI5NjF9.QwXh_vVTaDdmNdS6TqrGkdk1bE1vWEEOND2mVDgienQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"aburaihan8721@gmail.com\",\r\n    \"newPassword\": \"test1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/reset-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forget Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"aburaihan8721@gmail.com\",\r\n    \"newPassword\": \"test1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/forget-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"forget-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"item": [
+				{
+					"name": "Add Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/abura/Downloads/blog1.jpg"
+								},
+								{
+									"key": "data",
+									"value": "{\n    \"name\": \"Portfolio Website\",\n    \"type\": \"Web Development\",\n    \"overview\": \"A responsive portfolio website showcasing personal projects and skills.\",\n    \"techStack\": [\n        \"HTML\",\n        \"CSS\",\n        \"JavaScript\",\n        \"React\",\n        \"Node.js\"\n    ],\n    \"links\": [\n        \"https://github.com/username/portfolio\",\n        \"https://username.github.io/portfolio\"\n    ]\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/projects",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/abura/Downloads/project3.png"
+								},
+								{
+									"key": "data",
+									"value": "{\n    \"name\": \"Portfolio Website updated\",\n    \"type\": \"Web Development\",\n    \"overview\": \"A responsive portfolio website showcasing personal projects and skills.\",\n    \"techStack\": [\n        \"HTML\",\n        \"CSS\",\n        \"JavaScript\",\n        \"React\",\n        \"Node.js\"\n    ],\n    \"links\": [\n        \"https://github.com/username/portfolio\",\n        \"https://username.github.io/portfolio\"\n    ]\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/projects/678cb8e5e252845392bb9caa",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"678cb8e5e252845392bb9caa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/projects/678cb8e5e252845392bb9caa",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"678cb8e5e252845392bb9caa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/projects/678cb8e5e252845392bb9caa",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects",
+								"678cb8e5e252845392bb9caa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Projects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/projects",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "Add Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Web-dev/LEVEL-02/stn-assignment/portfolio-client/src/assets/images/blog2.jpg"
+								},
+								{
+									"key": "data",
+									"value": "{\n    \"title\": \"Blog 2\",\n    \"overview\": \"Lorem ipsum odor amet, consectetuer adipiscing elit.\",\n    \"content\": \"Conubia euismod justo vulputate nunc sociosqu ex maecenas. Scelerisque enim placerat eu tortor aliquam lobortis. Mauris curabitur mi convallis a massa. Nisi ornare dapibus mollis iaculis; molestie magna. Penatibus mi tortor quis sem sed. Lobortis aenean auctor cras bibendum porta est.\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/blogs",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Blogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/blogs",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Featured Blogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/blogs/featured-blogs",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"featured-blogs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/blogs/6790dfb5f9c0200abfc881c8",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"6790dfb5f9c0200abfc881c8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/blogs/6790dfb5f9c0200abfc881c8",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"6790dfb5f9c0200abfc881c8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Web-dev/LEVEL-02/stn-assignment/portfolio-client/src/assets/images/blog3.jpg"
+								},
+								{
+									"key": "data",
+									"value": "{\n    \"title\": \"Blog 2 updated\",\n    \"overview\": \"Lorem ipsum odor amet, consectetuer adipiscing elit.\",\n    \"content\": \"Conubia euismod justo vulputate nunc sociosqu ex maecenas. Scelerisque enim placerat eu tortor aliquam lobortis. Mauris curabitur mi convallis a massa. Nisi ornare dapibus mollis iaculis; molestie magna. Penatibus mi tortor quis sem sed. Lobortis aenean auctor cras bibendum porta est.\"\n}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/blogs/6790dfd2f9c0200abfc881cb",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"6790dfd2f9c0200abfc881cb"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Experience",
+			"item": [
+				{
+					"name": "Add Experience",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Experience 1\",\r\n    \"desc\": \"Lorem ipsum odor amet, consectetuer adipiscing elit.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/experiences",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"experiences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Experiences",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Experience 1\",\r\n    \"desc\": \"Lorem ipsum odor amet, consectetuer adipiscing elit.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/experiences",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"experiences"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Skill",
+			"item": [
+				{
+					"name": "Add Skill",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Skill 1\",\r\n    \"desc\": \"Lorem ipsum odor amet, consectetuer adipiscing elit.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/skills",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"skills"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Skills",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/skills",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"skills"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000"
+				}
+			},
+			"response": []
+		}
+	]
+}
